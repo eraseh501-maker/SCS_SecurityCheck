@@ -79,6 +79,9 @@ public sealed class SecurityScannerService(
             {
                 foreach (Match match in rule.Pattern.Matches(content))
                 {
+                    if (IsOnCommentOrTestLine(content, match.Index))
+                        continue;
+
                     var line = CountLine(content, match.Index);
                     findings.Add(new ScanFinding(
                         rule.Code,
@@ -236,6 +239,36 @@ public sealed class SecurityScannerService(
         }
 
         return builder.ToString();
+    }
+
+    /// <summary>
+    /// 若比對位置落在單行注釋（// ...）或測試斷言（Assert.xxx）行上，則回傳 true 表示應略過，
+    /// 以消除注釋與單元測試的假陽性。
+    /// </summary>
+    private static bool IsOnCommentOrTestLine(string content, int matchIndex)
+    {
+        // 找到該行的行首
+        var lineStart = matchIndex;
+        while (lineStart > 0 && content[lineStart - 1] != '\n')
+            lineStart--;
+
+        // 找到該行的行尾
+        var lineEnd = matchIndex;
+        while (lineEnd < content.Length && content[lineEnd] != '\n')
+            lineEnd++;
+
+        var fullLine = content[lineStart..lineEnd];
+        var trimmed = fullLine.TrimStart();
+
+        // 略過單行注釋 // ... 或 XML doc 注釋 * ...
+        if (trimmed.StartsWith("//") || trimmed.StartsWith("*"))
+            return true;
+
+        // 略過單元測試斷言（Assert.Contains / Assert.Equal 等）
+        if (trimmed.Contains("Assert.", StringComparison.Ordinal))
+            return true;
+
+        return false;
     }
 
     private static int CountLine(string content, int index)
