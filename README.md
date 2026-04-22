@@ -96,6 +96,37 @@ git push
 
 同事 `git pull` 後會自動獲得最新 skills。
 
+### 安全推送流程（必做）
+
+每次推送到 GitHub 前，請先執行以下檢查，避免推到錯誤倉庫：
+
+```bash
+# 1. 確認目前 Git 根目錄必須是本專案
+git rev-parse --show-toplevel
+
+# 2. 確認遠端 URL
+git remote -v
+
+# 3. 確認當前分支
+git branch --show-current
+```
+
+本專案已啟用 pre-push 安全確認機制（`.githooks/pre-push`），推送時會顯示：
+
+- Remote 名稱
+- Remote URL
+- 分支名稱
+
+你必須輸入 `YES` 才會繼續 push。
+
+標準推送命令：
+
+```bash
+git push -u origin main
+```
+
+若看到 URL 不是 `https://github.com/eraseh501-maker/SCS_SecurityCheck.git`，請立刻中止並修正 remote。
+
 ---
 
 ## 📋 API 端點
