@@ -1,0 +1,82 @@
+
+╔══════════════════════════════════════════════════════════════╗
+║           .NET SAST 安全掃描工具 — Docker 版                  ║
+║    掃描 C# 專案漏洞，原始碼絕不離開你的電腦                      ║
+╚══════════════════════════════════════════════════════════════╝
+
+═══ 前置需求 ═══
+
+1. 安裝 Docker Desktop（免費）：
+   https://www.docker.com/products/docker-desktop/
+
+2. 啟動 Docker Desktop，確認右下角 Docker 圖示顯示為「Running」
+
+
+═══ 第一次使用 ═══
+
+1. 解壓縮此 ZIP 到任意位置，例如 C:\Tools\dotnet-sast\
+
+2. 開啟 PowerShell，執行：
+   .\scan.ps1 -ProjectPath "C:\你的專案路徑" -Build
+
+   （加上 -Build 是讓工具建置 Docker 映像，約需 5-10 分鐘，只需一次）
+
+3. 等待掃描完成，報告會輸出到：
+   C:\你的專案路徑\sast-output\security-report.md
+
+
+═══ 之後每次掃描 ═══
+
+開啟 PowerShell，執行：
+
+  .\scan.ps1 -ProjectPath "C:\你的專案路徑"
+
+
+═══ 進階選項 ═══
+
+  # 只掃描 NuGet 套件漏洞
+  .\scan.ps1 -ProjectPath "C:\MyApp" -Tools "nuget"
+
+  # 只報告 High 等級以上漏洞
+  .\scan.ps1 -ProjectPath "C:\MyApp" -Severity "high"
+
+  # 指定多個工具
+  .\scan.ps1 -ProjectPath "C:\MyApp" -Tools "nuget,semgrep"
+
+
+═══ 報告說明 ═══
+
+報告位置：你的專案目錄\sast-output\security-report.md
+
+建議用 VS Code 開啟（支援 Markdown 預覽）：
+  code "C:\你的專案路徑\sast-output\security-report.md"
+
+報告內容：
+  🔴 Critical — 必須立即修復（密鑰洩漏、嚴重注入漏洞）
+  🟠 High     — 優先修復
+  🟡 Medium   — 計劃修復
+  🔵 Low      — 可納入下個版本
+
+
+═══ 常見問題 ═══
+
+Q：出現 "Docker Desktop is not running"？
+A：請先開啟 Docker Desktop 應用程式，等它完全啟動後再執行。
+
+Q：第一次建置很慢？
+A：正常現象，需要下載約 1GB 的映像層（.NET SDK + 工具）。
+   之後掃描不需重新下載，速度會快很多。
+
+Q：NuGet 掃描結果不完整？
+A：確認專案可以正常 build，Docker 容器需要能夠還原 NuGet 套件。
+   如果公司有內部 NuGet 伺服器，請告知 IT 設定 Docker 的網路設定。
+
+Q：原始碼安全嗎？
+A：所有掃描完全在本機 Docker 容器內執行，原始碼不會上傳到任何地方。
+
+
+═══ 問題回報 ═══
+
+掃描出錯時請把以下兩個檔案一起提供：
+  - 你的專案目錄\sast-output\sast-run.log
+  - 錯誤截圖

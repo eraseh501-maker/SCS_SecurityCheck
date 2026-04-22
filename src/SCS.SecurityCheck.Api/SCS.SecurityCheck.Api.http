@@ -1,0 +1,6 @@
+@SCS.SecurityCheck.Api_HostAddress = http://localhost:5075
+
+GET {{SCS.SecurityCheck.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

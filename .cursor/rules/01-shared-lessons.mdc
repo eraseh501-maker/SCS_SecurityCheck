@@ -1,0 +1,16 @@
+---
+description: Shared global and project-specific development guardrails
+alwaysApply: true
+---
+
+Use these files as the primary project context:
+
+- @../../AGENTS.md
+- @../../docs/90_全域AI開發守則.md
+- @../../docs/10_開發回顧與防錯守則.md
+
+Rules:
+
+- Follow global guardrails from `docs/90_全域AI開發守則.md`.
+- Apply project-specific lessons from `docs/10_開發回顧與防錯守則.md`.
+- If a new lesson is cross-project, update `D:\Vincent\AI-Knowledge\global\90_全域AI開發守則.md` first, then run `scripts\sync-ai-knowledge.ps1` to sync back.

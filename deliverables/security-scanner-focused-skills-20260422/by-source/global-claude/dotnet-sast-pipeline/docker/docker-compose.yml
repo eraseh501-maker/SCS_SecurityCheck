@@ -1,0 +1,16 @@
+name: dotnet-sast
+
+services:
+  scanner:
+    build:
+      context: ..          # 指向 dotnet-sast-pipeline/ 根目錄
+      dockerfile: docker/Dockerfile
+    image: dotnet-sast-scanner:latest
+    container_name: dotnet-sast-run
+    volumes:
+      - "${PROJECT_PATH:-.}:/scan"   # 預設掃描當前目錄，可用環境變數覆蓋
+    environment:
+      - TOOLS=${TOOLS:-all}
+      - SEVERITY=${SEVERITY:-medium}
+    # 掃描完畢後容器自動移除
+    restart: "no"

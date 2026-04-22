@@ -1,0 +1,95 @@
+{
+  "profile_id": "TW-HR-COMPLIANCE-BASELINE-v1",
+  "locale": "zh-TW",
+  "jurisdiction": "TW",
+  "default_timezone": "Asia/Taipei",
+  "source_priority": [
+    "external_law",
+    "administrative_guidance",
+    "internal_policy",
+    "sop"
+  ],
+  "topic_taxonomy": [
+    {
+      "topic": "work_hours",
+      "aliases": ["工時", "正常工時", "出勤", "排班"],
+      "process_area": "attendance",
+      "default_owner_function": "HR_Attendance"
+    },
+    {
+      "topic": "overtime_pay",
+      "aliases": ["加班", "延長工時", "加班費"],
+      "process_area": "payroll",
+      "default_owner_function": "HR_Payroll"
+    },
+    {
+      "topic": "leave_management",
+      "aliases": ["請假", "特休", "病假", "事假", "婚喪假"],
+      "process_area": "leave",
+      "default_owner_function": "HR_Operations"
+    },
+    {
+      "topic": "termination_and_severance",
+      "aliases": ["資遣", "解僱", "資遣費", "預告期"],
+      "process_area": "employee_lifecycle",
+      "default_owner_function": "HRBP"
+    },
+    {
+      "topic": "labor_insurance",
+      "aliases": ["勞保", "就保", "職災保險"],
+      "process_area": "benefits",
+      "default_owner_function": "HR_Benefits"
+    },
+    {
+      "topic": "health_insurance",
+      "aliases": ["健保", "健保投保", "健保費"],
+      "process_area": "benefits",
+      "default_owner_function": "HR_Benefits"
+    },
+    {
+      "topic": "withholding_tax",
+      "aliases": ["所得稅", "扣繳", "二代健保補充保費"],
+      "process_area": "payroll",
+      "default_owner_function": "Finance_Payroll"
+    },
+    {
+      "topic": "sexual_harassment_prevention",
+      "aliases": ["性騷擾", "申訴", "調查機制"],
+      "process_area": "employee_relations",
+      "default_owner_function": "HR_Compliance"
+    },
+    {
+      "topic": "personal_data_protection",
+      "aliases": ["個資", "隱私", "個人資料"],
+      "process_area": "data_governance",
+      "default_owner_function": "Legal_Privacy"
+    },
+    {
+      "topic": "occupational_safety",
+      "aliases": ["職安", "職災", "安全衛生"],
+      "process_area": "ehs",
+      "default_owner_function": "EHS"
+    }
+  ],
+  "risk_weights": {
+    "legal_penalty": 0.35,
+    "employee_impact": 0.35,
+    "financial_impact": 0.20,
+    "operational_disruption": 0.10
+  },
+  "high_risk_threshold": 0.75,
+  "minimum_evidence_per_control": 2,
+  "default_review_cycle": {
+    "high": "monthly",
+    "medium": "quarterly",
+    "low": "semiannual"
+  },
+  "required_outputs": [
+    "compliance/requirements/requirements.ndjson",
+    "compliance/controls/control_points.ndjson",
+    "compliance/traceability/requirement_control_map.ndjson",
+    "compliance/reports/gap_report.md",
+    "compliance/reports/control_summary.md",
+    "compliance/change-log/regulatory_deltas.md"
+  ]
+}

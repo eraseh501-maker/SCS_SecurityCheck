@@ -1,0 +1,5 @@
+Total Scanned: 370
+Total Hit: 21
+GlobalClaude: 10
+GlobalAgents: 11
+External: 0

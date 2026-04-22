@@ -1,0 +1,4 @@
+interface:
+  display_name: ".NET SAST Pipeline"
+  short_description: "Scan .NET C# projects for vulnerabilities"
+  default_prompt: "Use $dotnet-sast-pipeline to scan this .NET C# project for security vulnerabilities and generate a remediation report."

@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="en">
+<head><meta charset="UTF-8">
+<title>.NET SAST Report 20260417-160415</title>
+<style>
+ body{font-family:'Segoe UI',sans-serif;margin:24px;background:#f4f6f9;color:#222}
+ h1{color:#1a5276;border-bottom:3px solid #1a5276;padding-bottom:8px}
+ h2{color:#1f618d;margin-top:28px}
+ .meta{background:#d6eaf8;padding:10px 16px;border-radius:6px;margin-bottom:20px;line-height:1.9}
+ table{width:100%;border-collapse:collapse;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.1);margin-bottom:20px}
+ th{background:#1a5276;color:#fff;padding:10px;text-align:left}
+ td{padding:7px 12px;border-bottom:1px solid #eee;font-family:Consolas,monospace;font-size:13px;word-break:break-all}
+ tr.err  td{background:#fdecea;color:#c0392b}
+ tr.warn td{background:#fef9e7;color:#7d6608}
+ tr.info td{background:#f8f9fa;color:#555}
+ tr.ok   td{background:#eafaf1;color:#1e8449}
+ .ok-badge{background:#27ae60;color:#fff;padding:2px 9px;border-radius:10px;font-size:12px}
+ .warn-badge{background:#e67e22;color:#fff;padding:2px 9px;border-radius:10px;font-size:12px}
+</style></head>
+<body>
+<h1>.NET SAST Security Scan Report</h1>
+<div class="meta">
+  <b>Date:</b> 2026-04-17 16:05:04<br>
+  <b>Target:</b> D:\SCSHR\7.5\modules\backend\AIS.Business.RCR<br>
+  <b>SDK:</b> 10.0.202<br>
+  <b>Build:</b> <span class='ok-badge'>Build OK</span>
+</div>
+<h2>Roslyn Static Analysis (SecurityCodeScan + CA Rules)</h2>
+<table><tr><th>Finding</th></tr>
+<tr class='warn'><td>C:\Program Files\dotnet\sdk\10.0.202\Microsoft.CSharp.CurrentVersion.targets(130,9): warning MSB3884: ?曆??啗???瑼? "ManagedMinimumRules.ruleset"??[D:\SCSHR\7.5\libraries\shared\AIS.Office\AIS.Office.csproj]</td></tr>
+<tr class='warn'><td>C:\Program Files\dotnet\sdk\10.0.202\Microsoft.Common.CurrentVersion.targets(2451,5): warning MSB3245: ?⊥?閫??甇文??銝蝯辣 "DevExpress.RichEdit.v25.1.Export, Version=25.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL"??瑼Ｘ隞亦Ⅱ摰?蝣??府蝯辣??憒?蝔?蝣潮?閬迨???航??楊霅舫隤扎?[D:\SCSHR\7.5\modules\backend\AIS.Business.HRM\AIS.Business.HRM.csproj]</td></tr>
+<tr class='warn'><td>C:\Program Files\dotnet\sdk\10.0.202\Microsoft.Common.CurrentVersion.targets(2574,5): warning MSB3836: "System.Runtime.CompilerServices.Unsafe, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" 銝??Ⅱ蝜怎??撠?????蝜怎??撠??貉?蝒??撠敺??函?撘???蝘駁嚗???芸??Ｙ??鼠蝯??啣???撱箸?隞?"&lt;bindingRedirect oldVersion="0.0.0.0-6.0.3.0" newVersion="6.0.3.0" xmlns="urn:schemas-microsoft-com:asm.v1" /&gt;" ?誑?誨??[D:\SCSHR\7.5\modules\backend\AIS.Business.HRM\AIS.Business.HRM.csproj]</td></tr>
+<tr class='warn'><td>C:\Program Files\dotnet\sdk\10.0.202\Microsoft.Common.CurrentVersion.targets(2574,5): warning MSB3836: "System.Memory, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" 銝??Ⅱ蝜怎??撠?????蝜怎??撠??貉?蝒??撠敺??函?撘???蝘駁嚗???芸??Ｙ??鼠蝯??啣???撱箸?隞?"&lt;bindingRedirect oldVersion="0.0.0.0-4.0.5.0" newVersion="4.0.5.0" xmlns="urn:schemas-microsoft-com:asm.v1" /&gt;" ?誑?誨??[D:\SCSHR\7.5\modules\backend\AIS.Business.HRM\AIS.Business.HRM.csproj]</td></tr>
+<tr class='warn'><td>C:\Program Files\dotnet\sdk\10.0.202\Microsoft.Common.CurrentVersion.targets(2574,5): warning MSB3836: "System.Buffers, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" 銝??Ⅱ蝜怎??撠?????蝜怎??撠??貉?蝒??撠敺??函?撘???蝘駁嚗???芸??Ｙ??鼠蝯??啣???撱箸?隞?"&lt;bindingRedirect oldVersion="0.0.0.0-4.0.5.0" newVersion="4.0.5.0" xmlns="urn:schemas-microsoft-com:asm.v1" /&gt;" ?誑?誨??[D:\SCSHR\7.5\modules\backend\AIS.Business.HRM\AIS.Business.HRM.csproj]</td></tr>
+<tr class='warn'><td>C:\Program Files\dotnet\sdk\10.0.202\Microsoft.Common.CurrentVersion.targets(2574,5): warning MSB3836: "System.Numerics.Vectors, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" 銝??Ⅱ蝜怎??撠?????蝜怎??撠??貉?蝒??撠敺??函?撘???蝘駁嚗???芸??Ｙ??鼠蝯??啣???撱箸?隞?"&lt;bindingRedirect oldVersion="0.0.0.0-4.1.6.0" newVersion="4.1.6.0" xmlns="urn:schemas-microsoft-com:asm.v1" /&gt;" ?誑?誨??[D:\SCSHR\7.5\modules\backend\AIS.Business.HRM\AIS.Business.HRM.csproj]</td></tr>
+<tr class='warn'><td>C:\Program Files\dotnet\sdk\10.0.202\Microsoft.CSharp.CurrentVersion.targets(130,9): warning MSB3884: ?曆??啗???瑼? "ManagedMinimumRules.ruleset"??[D:\SCSHR\7.5\libraries\shared\AIS.Office\AIS.Office.csproj]</td></tr>
+<tr class='warn'><td>C:\Program Files\dotnet\sdk\10.0.202\Microsoft.Common.CurrentVersion.targets(2451,5): warning MSB3245: ?⊥?閫??甇文??銝蝯辣 "DevExpress.RichEdit.v25.1.Export, Version=25.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL"??瑼Ｘ隞亦Ⅱ摰?蝣??府蝯辣??憒?蝔?蝣潮?閬迨???航??楊霅舫隤扎?[D:\SCSHR\7.5\modules\backend\AIS.Business.HRM\AIS.Business.HRM.csproj]</td></tr>
+<tr class='warn'><td>C:\Program Files\dotnet\sdk\10.0.202\Microsoft.Common.CurrentVersion.targets(2574,5): warning MSB3836: "System.Runtime.CompilerServices.Unsafe, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" 銝??Ⅱ蝜怎??撠?????蝜怎??撠??貉?蝒??撠敺??函?撘???蝘駁嚗???芸??Ｙ??鼠蝯??啣???撱箸?隞?"&lt;bindingRedirect oldVersion="0.0.0.0-6.0.3.0" newVersion="6.0.3.0" xmlns="urn:schemas-microsoft-com:asm.v1" /&gt;" ?誑?誨??[D:\SCSHR\7.5\modules\backend\AIS.Business.HRM\AIS.Business.HRM.csproj]</td></tr>
+<tr class='warn'><td>C:\Program Files\dotnet\sdk\10.0.202\Microsoft.Common.CurrentVersion.targets(2574,5): warning MSB3836: "System.Memory, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" 銝??Ⅱ蝜怎??撠?????蝜怎??撠??貉?蝒??撠敺??函?撘???蝘駁嚗???芸??Ｙ??鼠蝯??啣???撱箸?隞?"&lt;bindingRedirect oldVersion="0.0.0.0-4.0.5.0" newVersion="4.0.5.0" xmlns="urn:schemas-microsoft-com:asm.v1" /&gt;" ?誑?誨??[D:\SCSHR\7.5\modules\backend\AIS.Business.HRM\AIS.Business.HRM.csproj]</td></tr>
+<tr class='warn'><td>C:\Program Files\dotnet\sdk\10.0.202\Microsoft.Common.CurrentVersion.targets(2574,5): warning MSB3836: "System.Buffers, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" 銝??Ⅱ蝜怎??撠?????蝜怎??撠??貉?蝒??撠敺??函?撘???蝘駁嚗???芸??Ｙ??鼠蝯??啣???撱箸?隞?"&lt;bindingRedirect oldVersion="0.0.0.0-4.0.5.0" newVersion="4.0.5.0" xmlns="urn:schemas-microsoft-com:asm.v1" /&gt;" ?誑?誨??[D:\SCSHR\7.5\modules\backend\AIS.Business.HRM\AIS.Business.HRM.csproj]</td></tr>
+<tr class='warn'><td>C:\Program Files\dotnet\sdk\10.0.202\Microsoft.Common.CurrentVersion.targets(2574,5): warning MSB3836: "System.Numerics.Vectors, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" 銝??Ⅱ蝜怎??撠?????蝜怎??撠??貉?蝒??撠敺??函?撘???蝘駁嚗???芸??Ｙ??鼠蝯??啣???撱箸?隞?"&lt;bindingRedirect oldVersion="0.0.0.0-4.1.6.0" newVersion="4.1.6.0" xmlns="urn:schemas-microsoft-com:asm.v1" /&gt;" ?誑?誨??[D:\SCSHR\7.5\modules\backend\AIS.Business.HRM\AIS.Business.HRM.csproj]</td></tr>
+
+</table>
+<h2>NuGet Package Vulnerabilities</h2>
+<table><tr><th>Finding</th></tr>
+<tr class='ok'><td>No known vulnerable NuGet packages</td></tr>
+</table>
+</body></html>

@@ -1,0 +1,432 @@
+﻿<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SCS C# 安全掃描工具</title>
+  <style>
+    :root {
+      --bg: #f2efe7;
+      --panel: #fffdf8;
+      --ink: #1f2937;
+      --muted: #6b7280;
+      --accent: #0f766e;
+      --accent-2: #164e63;
+      --danger: #b91c1c;
+      --line: #d6d3d1;
+      --cvss-critical: #7f1d1d;
+      --cvss-high:     #b45309;
+      --cvss-medium:   #0369a1;
+      --cvss-low:      #166534;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 10%, #d1fae5 0, transparent 40%),
+        radial-gradient(circle at 90% 80%, #cffafe 0, transparent 35%),
+        var(--bg);
+      min-height: 100vh;
+    }
+    .wrap { max-width: 1020px; margin: 36px auto; padding: 20px; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 14px 30px rgba(15,23,42,0.08);
+      padding: 24px;
+      animation: fadeIn 380ms ease;
+    }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    h2 { font-size: 17px; margin: 20px 0 12px; color: var(--ink); }
+    .sub { margin: 0 0 20px; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .full { grid-column: 1 / -1; }
+    label { font-weight: 700; font-size: 14px; display: block; margin-bottom: 6px; }
+    input, select, textarea {
+      width: 100%; padding: 10px 12px; border-radius: 10px;
+      border: 1px solid var(--line); font-size: 14px; background: white;
+    }
+    textarea {
+      min-height: 280px;
+      font-family: Consolas, "Noto Sans Mono CJK TC", monospace;
+      line-height: 1.5; resize: vertical;
+    }
+    .actions { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
+    button {
+      border: 0; padding: 10px 16px; border-radius: 999px; color: white;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      font-weight: 700; cursor: pointer;
+    }
+    button.secondary { background: #475569; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .msg { margin-top: 8px; min-height: 20px; color: var(--muted); }
+    .err { color: var(--danger); }
+    .ok { color: #166534; }
+    .toggle { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+    .toggle input { width: auto; }
+
+    /* ── 統計卡片 ── */
+    #dashboard { display: none; }
+    .stats-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+    .stat-card {
+      flex: 1 1 110px; min-width: 100px; border-radius: 12px;
+      padding: 14px 16px; text-align: center; color: white;
+    }
+    .stat-card .num  { font-size: 30px; font-weight: 800; line-height: 1; }
+    .stat-card .lbl  { font-size: 12px; margin-top: 4px; opacity: 0.9; }
+    .stat-critical   { background: linear-gradient(135deg,#7f1d1d,#b91c1c); }
+    .stat-high       { background: linear-gradient(135deg,#92400e,#b45309); }
+    .stat-medium     { background: linear-gradient(135deg,#1e3a5f,#0369a1); }
+    .stat-low        { background: linear-gradient(135deg,#14532d,#166534); }
+    .stat-total      { background: linear-gradient(135deg,#312e81,#4338ca); }
+    .stat-files      { background: linear-gradient(135deg,#1f2937,#374151); }
+
+    /* ── CVSS 優先序表 ── */
+    .priority-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .priority-table th {
+      text-align: left; padding: 8px 10px;
+      background: #f1f5f9; border-bottom: 2px solid var(--line);
+    }
+    .priority-table td {
+      padding: 7px 10px; border-bottom: 1px solid #e5e7eb;
+      vertical-align: middle;
+    }
+    .priority-table tr:hover td { background: #f8fafc; }
+    .badge {
+      display: inline-block; border-radius: 6px; padding: 2px 8px;
+      font-size: 12px; font-weight: 700; color: white; white-space: nowrap;
+    }
+    .badge-Critical { background: var(--cvss-critical); }
+    .badge-High     { background: var(--cvss-high); }
+    .badge-Medium   { background: var(--cvss-medium); }
+    .badge-Low      { background: var(--cvss-low); }
+
+    /* CVSS 分數列 */
+    .cvss-cell { display: flex; align-items: center; gap: 8px; }
+    .cvss-bar-bg {
+      flex: 1; height: 8px; background: #e5e7eb;
+      border-radius: 99px; overflow: hidden; min-width: 60px; max-width: 100px;
+    }
+    .cvss-bar-fill { height: 100%; border-radius: 99px; }
+    .cvss-score { font-weight: 700; font-size: 13px; min-width: 28px; text-align: right; }
+
+    /* 分頁 tabs */
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .tab-btn {
+      padding: 6px 16px; border-radius: 999px; font-size: 13px;
+      background: #e2e8f0; color: #374151; border: none; cursor: pointer;
+      font-weight: 600; transition: background 0.15s;
+    }
+    .tab-btn.active { background: var(--accent); color: white; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr; }
+      .stats-row { flex-direction: column; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>C# 專案弱點掃描</h1>
+      <p class="sub">零外部依賴掃描，可選擇 API Key 取得 AI 新增建議。</p>
+
+      <div class="grid">
+        <div class="full">
+          <label for="projectPath">專案資料夾路徑</label>
+          <input id="projectPath" placeholder="例如 D:\\Projects\\MyApp" />
+        </div>
+        <div>
+          <label for="provider">AI 供應商</label>
+          <select id="provider">
+            <option value="openai">OpenAI</option>
+            <option value="claude">Claude</option>
+          </select>
+        </div>
+        <div>
+          <label for="apiKey">API Key（可不填）</label>
+          <input id="apiKey" type="password" placeholder="sk-... 或 anthropic key" />
+        </div>
+        <div class="full toggle">
+          <input id="enableAi" type="checkbox" />
+          <label for="enableAi" style="margin:0;">啟用 AI 新增建議</label>
+        </div>
+        <div class="full actions">
+          <button id="scanBtn">開始掃描</button>
+          <button id="cancelBtn" class="secondary" disabled>取消掃描</button>
+          <button id="downloadBtn" class="secondary" disabled>下載 Markdown</button>
+          <button id="downloadExcelBtn" class="secondary" disabled>下載 Excel</button>
+        </div>
+      </div>
+
+      <div id="message" class="msg"></div>
+
+      <!-- 儀表板（掃描完成後顯示） -->
+      <div id="dashboard">
+        <h2>掃描結果總覽</h2>
+        <div class="stats-row" id="statsRow"></div>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="priority">CVSS 修復優先序</button>
+          <button class="tab-btn" data-tab="report">Markdown 報告</button>
+        </div>
+
+        <div id="tab-priority" class="tab-panel active">
+          <table class="priority-table">
+            <thead>
+              <tr>
+                <th>#</th><th>規則碼</th><th>弱點名稱</th>
+                <th>嚴重度</th><th style="min-width:160px">CVSS v3</th>
+                <th>次數</th><th>檔案數</th>
+              </tr>
+            </thead>
+            <tbody id="priorityBody"></tbody>
+          </table>
+        </div>
+
+        <div id="tab-report" class="tab-panel">
+          <textarea id="report" readonly placeholder="掃描完成後會顯示報告內容"></textarea>
+        </div>
+      </div>
+
+      <!-- 尚未掃描前的 placeholder -->
+      <div id="reportPlaceholder" style="margin-top:12px;">
+        <label for="reportEmpty">報告預覽</label>
+        <textarea id="reportEmpty" readonly placeholder="掃描完成後會顯示報告內容"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const projectPath = document.getElementById("projectPath");
+    const provider    = document.getElementById("provider");
+    const apiKey      = document.getElementById("apiKey");
+    const enableAi    = document.getElementById("enableAi");
+    const scanBtn     = document.getElementById("scanBtn");
+    const cancelBtn   = document.getElementById("cancelBtn");
+    const downloadBtn     = document.getElementById("downloadBtn");
+    const downloadExcelBtn = document.getElementById("downloadExcelBtn");
+    const message     = document.getElementById("message");
+    const report      = document.getElementById("report");
+    const dashboard   = document.getElementById("dashboard");
+    const placeholder = document.getElementById("reportPlaceholder");
+    const POLL_INTERVAL_MS = 2000;
+
+    let latestMarkdown   = "";
+    let currentScanId    = null;
+    let currentAccessKey = null;
+    let pollTimer = null;
+
+    // ── Tab 切換 ──
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+      });
+    });
+
+    function setMessage(text, cls) {
+      message.className = `msg ${cls || ""}`;
+      message.textContent = text;
+    }
+
+    function cvssColor(score) {
+      if (score >= 9.0) return "#b91c1c";
+      if (score >= 7.0) return "#b45309";
+      if (score >= 4.0) return "#0369a1";
+      return "#166534";
+    }
+
+    function buildDashboard(result) {
+      const s = result.summary || {};
+      const findings = result.findings || [];
+
+      // 統計卡片
+      const statsRow = document.getElementById("statsRow");
+      statsRow.innerHTML = `
+        <div class="stat-card stat-critical"><div class="num">${s.critical ?? 0}</div><div class="lbl">Critical</div></div>
+        <div class="stat-card stat-high">    <div class="num">${s.high ?? 0}</div>    <div class="lbl">High</div></div>
+        <div class="stat-card stat-medium">  <div class="num">${s.medium ?? 0}</div>  <div class="lbl">Medium</div></div>
+        <div class="stat-card stat-low">     <div class="num">${s.low ?? 0}</div>     <div class="lbl">Low</div></div>
+        <div class="stat-card stat-total">   <div class="num">${s.totalFindings ?? 0}</div><div class="lbl">總弱點數</div></div>
+        <div class="stat-card stat-files">   <div class="num">${s.totalFilesScanned ?? 0}</div><div class="lbl">掃描檔案</div></div>
+      `;
+
+      // CVSS 優先序表（前端聚合）
+      const grouped = {};
+      for (const f of findings) {
+        const k = f.ruleCode;
+        if (!grouped[k]) grouped[k] = { ruleCode: f.ruleCode, title: f.title, severity: f.severity, cvssScore: f.cvssScore, count: 0, files: new Set() };
+        grouped[k].count++;
+        grouped[k].files.add(f.filePath);
+      }
+      const rows = Object.values(grouped)
+        .sort((a, b) => b.cvssScore - a.cvssScore || a.ruleCode.localeCompare(b.ruleCode));
+
+      const tbody = document.getElementById("priorityBody");
+      if (rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">✅ 未發現弱點</td></tr>`;
+      } else {
+        tbody.innerHTML = rows.map((r, i) => {
+          const pct = Math.round((r.cvssScore / 10) * 100);
+          const color = cvssColor(r.cvssScore);
+          const scoreLabel = r.cvssScore >= 9.0 ? `<strong>${r.cvssScore.toFixed(1)}</strong>` : r.cvssScore.toFixed(1);
+          return `<tr>
+            <td>${i + 1}</td>
+            <td><code>${r.ruleCode}</code></td>
+            <td>${r.title}</td>
+            <td><span class="badge badge-${r.severity}">${r.severity}</span></td>
+            <td>
+              <div class="cvss-cell">
+                <div class="cvss-bar-bg"><div class="cvss-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+                <span class="cvss-score" style="color:${color}">${scoreLabel}</span>
+              </div>
+            </td>
+            <td>${r.count}</td>
+            <td>${r.files.size}</td>
+          </tr>`;
+        }).join("");
+      }
+
+      dashboard.style.display = "block";
+      placeholder.style.display = "none";
+      report.value = result.markdownReport || "";
+    }
+
+    scanBtn.addEventListener("click", async () => {
+      const path = projectPath.value.trim();
+      if (!path) { setMessage("請先輸入專案資料夾路徑。", "err"); return; }
+
+      scanBtn.disabled = true;
+      cancelBtn.disabled = false;
+      downloadBtn.disabled = true;
+      downloadExcelBtn.disabled = true;
+      dashboard.style.display = "none";
+      placeholder.style.display = "block";
+      setMessage("掃描中，請稍候...", "");
+      latestMarkdown = "";
+
+      try {
+        const body = {
+          projectPath: path,
+          enableAiSuggestions: enableAi.checked,
+          aiProvider: provider.value,
+          apiKey: apiKey.value.trim() || null
+        };
+        const response = await fetch("/api/scans", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "掃描失敗");
+
+        currentScanId = data.scanId;
+        currentAccessKey = data.accessKey;
+        if (!currentScanId || !currentAccessKey) throw new Error("無法建立掃描任務");
+
+        setMessage("掃描任務已建立，正在分析檔案...", "");
+        startPolling();
+      } catch (error) {
+        setMessage(`掃描失敗: ${error.message}`, "err");
+        scanBtn.disabled = false;
+        cancelBtn.disabled = true;
+      }
+    });
+
+    cancelBtn.addEventListener("click", async () => {
+      if (!currentScanId || !currentAccessKey) return;
+      try {
+        await fetch(`/api/scans/${currentScanId}/cancel?key=${encodeURIComponent(currentAccessKey)}`, { method: "POST" });
+        setMessage("已送出取消請求，等待任務停止...", "");
+      } catch (error) {
+        setMessage(`取消失敗: ${error.message}`, "err");
+      }
+    });
+
+    function stopPolling() {
+      if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+    }
+
+    function startPolling() {
+      stopPolling();
+      pollTimer = setInterval(async () => {
+        if (!currentScanId) { stopPolling(); return; }
+        try {
+          const res = await fetch(`/api/scans/${currentScanId}?key=${encodeURIComponent(currentAccessKey)}`);
+          if (!res.ok) throw new Error("查詢掃描狀態失敗");
+
+          const status = await res.json();
+          const total = status.totalFiles || 0;
+          const done  = status.processedFiles || 0;
+          const pct   = total > 0 ? Math.min(100, Math.round(done * 100 / total)) : 0;
+
+          if (status.status === "running" || status.status === "queued") {
+            setMessage(`掃描中... ${pct}% (${done}/${total})`, "");
+            return;
+          }
+
+          if (status.status === "completed") {
+            latestMarkdown = status.result?.markdownReport || "";
+            buildDashboard(status.result || {});
+            downloadBtn.disabled = !latestMarkdown;
+            downloadExcelBtn.disabled = false;
+            downloadExcelBtn.dataset.scanId = scanId;
+            downloadExcelBtn.dataset.key    = currentAccessKey;
+            setMessage("掃描完成。", "ok");
+          } else if (status.status === "cancelled") {
+            setMessage("掃描已取消。", "err");
+          } else {
+            setMessage(`掃描失敗: ${status.errorMessage || "未知錯誤"}`, "err");
+          }
+
+          scanBtn.disabled = false;
+          cancelBtn.disabled = true;
+          currentScanId = null;
+          currentAccessKey = null;
+          stopPolling();
+        } catch (error) {
+          setMessage(`狀態更新失敗: ${error.message}`, "err");
+          scanBtn.disabled = false;
+          cancelBtn.disabled = true;
+          downloadExcelBtn.disabled = true;
+          currentScanId = null;
+          currentAccessKey = null;
+          stopPolling();
+        }
+      }, POLL_INTERVAL_MS);
+    }
+
+    downloadExcelBtn.addEventListener("click", async () => {
+      if (!currentScanId && downloadExcelBtn.dataset.scanId) {
+        const sid = downloadExcelBtn.dataset.scanId;
+        const key = downloadExcelBtn.dataset.key;
+        const url = `/api/scans/${encodeURIComponent(sid)}/export/excel?key=${encodeURIComponent(key)}`;
+        window.location.href = url;
+      }
+    });
+
+    downloadBtn.addEventListener("click", () => {
+      if (!latestMarkdown) return;
+      const blob = new Blob([latestMarkdown], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `security-report-${new Date().toISOString().replace(/[:.]/g, "-")}.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>

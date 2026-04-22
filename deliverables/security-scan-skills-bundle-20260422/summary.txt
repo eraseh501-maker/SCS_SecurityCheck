@@ -1,0 +1,7 @@
+﻿Total Skills Scanned: 370
+Total Security/Scanning Skills Matched: 156
+Project: 0
+Global Claude: 74
+Global Agents: 82
+External Skills: 0
+Unique Skill Names: 83
