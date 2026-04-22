@@ -382,7 +382,7 @@
             buildDashboard(status.result || {});
             downloadBtn.disabled = !latestMarkdown;
             downloadExcelBtn.disabled = false;
-            downloadExcelBtn.dataset.scanId = scanId;
+            downloadExcelBtn.dataset.scanId = currentScanId;
             downloadExcelBtn.dataset.key    = currentAccessKey;
             setMessage("掃描完成。", "ok");
           } else if (status.status === "cancelled") {
