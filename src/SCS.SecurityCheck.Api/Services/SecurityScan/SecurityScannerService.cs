@@ -271,7 +271,7 @@ public sealed class SecurityScannerService(
     {
         return new List<RuleDefinition>
         {
-            new("SCS001", "可能的 SQL Injection", "High", new Regex("(SELECT|INSERT|UPDATE|DELETE)[^\\n\\r]*\\+", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請使用參數化查詢，避免用字串拼接 SQL。", 9.8),
+            new("SCS001", "可能的 SQL Injection", "High", new Regex("@?\"[^\"\\r\\n]*\\b(?:SELECT|INSERT|UPDATE|DELETE)\\b[^\"\\r\\n]*\"\\s*\\+|(?:FromSqlRaw|ExecuteSqlRaw|SqlRaw|SqlQuery)\\s*\\([^;)]*\\+", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請使用參數化查詢或 EF Core ORM（LINQ），避免在字串常值中以 + 拼接 SQL；EF Core 的 .Add()/.Update()/.Remove() 等 LINQ 操作永遠使用參數化 SQL，不在此規則範圍內。", 9.8),
             new("SCS002", "硬編碼密碼或金鑰", "Critical", new Regex("((password|pwd|apikey|secret)\\s*[:=]\\s*\"[^\"]{4,}\")|(password\\s*=\\s*[^;\\\"\\s]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請改用環境變數保存密碼", 9.1),
             new("SCS003", "使用弱雜湊或弱加密", "High", new Regex("(MD5|SHA1|DESCryptoServiceProvider|RC2)", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請改用 SHA-256 以上雜湊與現代加密演算法。", 7.5),
             new("SCS004", "不安全反序列化", "High", new Regex("BinaryFormatter|TypeNameHandling\\s*\\.\\s*All", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請避免不安全反序列化，並加入型別白名單。", 9.8),
@@ -279,7 +279,7 @@ public sealed class SecurityScannerService(
             new("SCS006", "可能的開放重新導向", "Medium", new Regex("Redirect\\s*\\([^\\)]*(Request\\.|Query\\.)", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請限制重新導向目標為相對路徑或白名單。", 6.1),
             new("SCS007", "可能的 SSRF 風險", "High", new Regex("HttpClient\\s*\\.[^\\n\\r]*\\((Request\\.|Query\\.|Form\\.)", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請限制可連線的 URL 與網段白名單。", 8.6),
             new("SCS008", "寬鬆 CORS 設定", "High", new Regex("AllowAnyOrigin\\s*\\(\\s*\\)\\s*\\.[^\\n\\r]*AllowCredentials|AllowCredentials\\s*\\(\\s*\\)\\s*\\.[^\\n\\r]*AllowAnyOrigin", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請改為明確網域白名單，不要同時允許任意來源與憑證。", 8.1),
-            new("SCS009", "例外細節外洩", "Medium", new Regex("(ToString\\s*\\(\\s*\\)|StackTrace)", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請回傳通用錯誤訊息，細節只寫入內部日誌。", 5.3),
+            new("SCS009", "例外細節外洩", "Medium", new Regex("\\b(?:ex|exception|exc|err|error)\\b\\s*\\.\\s*(?:Message|StackTrace|ToString\\s*\\(\\s*\\)|InnerException)|\\.StackTrace\\b", RegexOptions.IgnoreCase | RegexOptions.Compiled), "例外的 Message/StackTrace 不應直接回傳給 HTTP 用戶端，請改用通用錯誤訊息，細節僅寫入內部日誌（注意：一般型別的 .ToString()、Enum.ToString() 不屬此規則範圍）。", 5.3),
             new("SCS010", "不安全隨機數用途", "Medium", new Regex("new\\s+Random\\s*\\(\\s*\\)", RegexOptions.IgnoreCase | RegexOptions.Compiled), "安全用途請改用 RandomNumberGenerator。", 5.9),
             new("SCS011", "可能的 XXE 風險", "High", new Regex("new\\s+XmlDocument\\s*\\(|XmlReaderSettings\\s*\\{[^}]*DtdProcessing\\s*=\\s*DtdProcessing\\.Parse", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請關閉 DTD 並明確設定 XmlResolver 為 null。", 9.1),
             new("SCS012", "可能的 XSS 風險 (Html.Raw)", "High", new Regex("Html\\.Raw\\s*\\(", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請避免直接輸出未編碼內容，改用預設 HTML 編碼輸出。", 7.2),
