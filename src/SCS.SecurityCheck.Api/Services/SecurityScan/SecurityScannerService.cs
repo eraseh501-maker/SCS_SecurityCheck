@@ -305,7 +305,7 @@ public sealed class SecurityScannerService(
         return new List<RuleDefinition>
         {
             new("SCS001", "可能的 SQL Injection", "High", new Regex("@?\"[^\"\\r\\n]*\\b(?:SELECT|INSERT|UPDATE|DELETE)\\b[^\"\\r\\n]*\"\\s*\\+|(?:FromSqlRaw|ExecuteSqlRaw|SqlRaw|SqlQuery)\\s*\\([^;)]*\\+", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請使用參數化查詢或 EF Core ORM（LINQ），避免在字串常值中以 + 拼接 SQL；EF Core 的 .Add()/.Update()/.Remove() 等 LINQ 操作永遠使用參數化 SQL，不在此規則範圍內。", 9.8),
-            new("SCS002", "硬編碼密碼或金鑰", "Critical", new Regex("((password|pwd|apikey|secret)\\s*[:=]\\s*\"[^\"]{4,}\")|(password\\s*=\\s*[^;\\\"\\s]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請改用環境變數保存密碼", 9.1),
+            new("SCS002", "硬編碼密碼或金鑰", "Critical", new Regex("(password|pwd|apikey|secret)\\s*[:=]\\s*\"[^\"]{4,}\"", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請改用環境變數或 Secret Manager 保存密碼與金鑰，不應在原始碼中硬編碼字串字面值。", 9.1),
             new("SCS003", "使用弱雜湊或弱加密", "High", new Regex("(MD5|SHA1|DESCryptoServiceProvider|RC2)", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請改用 SHA-256 以上雜湊與現代加密演算法。", 7.5),
             new("SCS004", "不安全反序列化", "High", new Regex("BinaryFormatter|TypeNameHandling\\s*\\.\\s*All", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請避免不安全反序列化，並加入型別白名單。", 9.8),
             new("SCS005", "可能的路徑穿越", "Medium", new Regex("(ReadAllText|OpenRead|WriteAllText)\\s*\\([^\\)]*(Request\\.|Query\\.|Form\\.)", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請先正規化路徑並限制在允許目錄內。", 7.5),
@@ -324,7 +324,7 @@ public sealed class SecurityScannerService(
             new("SCS018", "高風險端點允許匿名", "Medium", new Regex("\\[AllowAnonymous\\][\\s\\S]{0,220}(Delete|Update|Admin|Manage)", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請確認高風險操作不允許匿名存取。", 6.5),
             new("SCS019", "停用 CSRF 防護", "High", new Regex("IgnoreAntiforgeryToken|ValidateAntiForgeryToken\\s*\\(\\s*false\\s*\\)", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請啟用 AntiForgery 保護並驗證跨站請求。", 8.8),
             new("SCS020", "日誌可能洩漏敏感資訊", "Medium", new Regex("Log(Information|Warning|Error|Debug|Trace)\\s*\\([^\\)]*(password|apikey|token|secret)", RegexOptions.IgnoreCase | RegexOptions.Compiled), "記錄前請遮罩敏感欄位，避免密碼或金鑰進入日誌。", 5.3),
-            new("SCS021", "可能的 LDAP Injection", "High", new Regex("Filter\\s*=\\s*[^\\n;]*\\+", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請對 LDAP 搜尋過濾器使用參數化方式或跳脫特殊字元，避免用字串拼接。", 8.8),
+            new("SCS021", "可能的 LDAP Injection", "High", new Regex("\\.Filter\\s*=\\s*[^\\n;]*\\+", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請對 LDAP 搜尋過濾器（DirectorySearcher.Filter、SearchRequest.Filter）使用參數化方式或跳脫特殊字元，避免用字串拼接。", 8.8),
             new("SCS022", "可能的 XPath Injection", "High", new Regex("(SelectNodes|SelectSingleNode)\\s*\\([^)]*\\+", RegexOptions.IgnoreCase | RegexOptions.Compiled), "請使用 XPathExpression 搭配參數或事先驗證輸入，不要直接拼接使用者輸入。", 7.5),
             new("SCS023", "不安全 Cookie 設定", "Medium", new Regex("HttpOnly\\s*=\\s*false|\\.Secure\\s*=\\s*false", RegexOptions.IgnoreCase | RegexOptions.Compiled), "Cookie 應設定 HttpOnly=true 與 Secure=true，以防止 XSS 竊取與中間人攻擊。", 6.5),
             new("SCS024", "URL 含敏感參數", "High", new Regex("[\"']https?://[^\"']*[?&](password|pwd|token|apikey|api_key|secret)=", RegexOptions.IgnoreCase | RegexOptions.Compiled), "敏感資料不應出現在 URL 中，請改用 POST body 或 Authorization header 傳遞。", 7.5),
