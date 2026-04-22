@@ -1,0 +1,15 @@
+#!/bin/sh
+remote_name="$1"
+remote_url="$2"
+branch_name="$(git rev-parse --abbrev-ref HEAD)"
+echo "[Safe Push] Remote: ${remote_name}"
+echo "[Safe Push] URL   : ${remote_url}"
+echo "[Safe Push] Branch: ${branch_name}"
+echo ""
+echo "Type YES to continue push:"
+read confirm
+if [ "$confirm" != "YES" ]; then
+  echo "Push aborted by safety hook."
+  exit 1
+fi
+exit 0
